@@ -1,68 +1,66 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## react-redux的使用
 
-## Available Scripts
+react-redux是一个第三方模块，可以帮助我们更方便地使用redux。
 
-In the project directory, you can run:
+- ### 安装redux、react-redux
 
-### `npm start`
+  ```
+  $ sudo cnpm install redux -S
+  $ sudo cnpm install react-redux -S
+  ```
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- 在项目入口文件index.js里引入react-redux，并使用react-redux提供的容器组件Provider，将state通过store属性分发给所有被connect起来的组件
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+  ```javascript
+  //index.js
+  import { Provider } from "react-redux"
+  import "./redux/store"
+  import TodoList from "./TodoList"
+  const App = (
+    <Provider store={store}>
+      <TodoList />
+    </Provider>
+  )
+  ReactDOM.render(App, document.getElementById('root'));
+  ```
 
-### `npm test`
+  - Provider是react-redux提供的一个普通的组件，可以作为顶层app容器的分发点，它只需要接收store一个属性，它会将state分发给所有被connect起来的组件，不管它在哪里，被嵌套了多少层。
+  - ReactDOM.render()方法里接收的不再是<TodoList />组件，而是`App`
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- ### 在组件里用connect接收store分发下来的state
 
-### `npm run build`
+  ```javascript
+  import { connect } from "react-redux"
+  class TodoList extends Component{
+    //···省略
+    <input value={this.props.inputValue}>
+    //···省略
+  }
+  const mapStateToProps = (state) => {
+    return {}
+  }
+  const mapDispatchToProps = (dispatch) => {
+    return {}
+  }
+  export default connect(mapStateToProps,mapDispatchToProps)(TodoList)
+  ```
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  - #### connect()()方法
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+    - 语法：connect( mapStateToProps, mapDispatchToProps )( TodoList )；
+    - 先接收两个参数：数据绑定mapStateToProps和事件绑定mapDispatchToProps；
+    - 再接收一个参数：要接收数据的组件。connect是给组件与store做连接的方法。接收组件之后，再给组件做以上所述的数据绑定和事件绑定。
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  - #### mapStateToProps：
 
-### `npm run eject`
+    - 接受store里的state，返回一个对象；
+    - 构建好redux系统的时候，会被自动初始化；
+    - 是数据连接规则，意思是把state映射给props；
+    - react组件并不知道它的存在。因此需要分拣出组件所需要的redux状态。所以mapStateToProps需要绑定一个函数，函数接收state，返回一个对象，对象包含组件需要的值。
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+  - #### mapDispatchToProps：
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    - 接收dispatch作为参数，进行事件绑定，返回一个对象；
+    - 组件当中需要执行的事件都在mapDispatchToProps里注册完成；
+    - mapDispatchToProps意为把store.dispatch方法挂载到props上。
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
